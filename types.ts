@@ -1,4 +1,6 @@
 
+
+
 export interface RelatedContextItem {
   quote: string;
   category: string;
@@ -74,7 +76,7 @@ export interface ConversationTurn {
     content: string;
 }
 
-export type ModelName = 'gemini-3-pro-preview' | 'gemini-2.5-pro' | 'gemini-2.5-flash';
+export type ModelName = 'gemini-3-pro-preview' | 'gemini-2.5-pro' | 'gemini-2.5-flash' | 'gemini-3-flash-preview';
 
 export type ModelStageConfig = {
     model: ModelName;
@@ -88,4 +90,78 @@ export type ModelConfig = {
     essayCleaning: ModelStageConfig;
     essayInteraction: ModelStageConfig;
     essayGrading: ModelStageConfig;
+};
+
+// --- MCQ Module Types ---
+
+export type MCQMode = 'theory' | 'case';
+export type MCQStage = 'setup' | 'generation' | 'audit' | 'finished';
+
+export interface DifficultyWeights {
+    easy: number;
+    medium: number;
+    hard: number;
+    veryHard: number;
+}
+
+export interface MCQOptions {
+    allowCrossSectionContext: boolean; // Cho phép dùng kiến thức từ phần khác trong bài
+    allowExternalSources: boolean; // Cho phép dùng kiến thức ngoài (nguy hiểm, dễ hallucination)
+}
+
+export interface MCQCard {
+    id: string;
+    front: string; // Stem + Options
+    options: string[]; // Raw options for structured display if needed
+    correctOption: string; // e.g., 'A'
+    back: string; // Compiled back side
+    explanation: string;
+    hint: string;
+    originalQuote: string;
+    sourceHeading: string;
+    sourceLesson: string;
+    questionCategory: string; // e.g. "Chẩn đoán", "Điều trị"
+    difficultyTag: string; // e.g. "Dễ", "Trung bình", "Khó", "Rất khó"
+    // Audit flags
+    auditStatus?: 'pass' | 'fail' | 'warning';
+    auditNotes?: string[];
+}
+
+export interface MCQJob {
+    id: string;
+    sectionTitle: string;
+    sectionContent: string;
+    status: 'queued' | 'running' | 'completed' | 'failed' | 'retrying';
+    step: 'decompose' | 'generate' | 'evaluate' | 'decide' | 'done';
+    result: MCQCard[];
+    error?: string;
+    retryCount: number;
+    nextRetryTime?: number; // timestamp for backoff
+    laneId?: number; // Which lane picked this up
+}
+
+export interface MCQLane {
+    id: number;
+    status: 'idle' | 'busy' | 'cooldown';
+    currentJobId: string | null;
+    cooldownEndsAt: number | null;
+    errorCount: number;
+}
+
+export interface MCQGenerationResult {
+    mcqs: MCQCard[];
+    skippedReasons: string[];
+    evaluationSummary: string;
+}
+
+export interface MCQAuditResult {
+    auditReport: string;
+    passedMCQs: MCQCard[];
+    failedCount: number;
+}
+
+export type MCQConfig = {
+    cleaning: ModelStageConfig;
+    generation: ModelStageConfig;
+    audit: ModelStageConfig;
 };

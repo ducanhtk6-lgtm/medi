@@ -1,5 +1,5 @@
 {
-  "name": "Medical Anki Cloze Generator [Gemini-3-pro]",
+  "name": "Medical Anki Cloze/ MCQ Generator ",
   "description": "An AI-powered tool to help medical students generate high-quality Anki cloze deletion flashcards from their lesson notes, based on specific sections and medical specialties.",
   "requestFramePermissions": []
 }

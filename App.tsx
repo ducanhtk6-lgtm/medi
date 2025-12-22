@@ -1,3 +1,5 @@
+
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Header } from './components/Header';
 import { InputPanel } from './components/InputPanel';
@@ -5,7 +7,8 @@ import { OutputPanel } from './components/OutputPanel';
 import { ReviewPanel } from './components/ReviewPanel';
 import { ReviewSession } from './components/ReviewSession';
 import { EssayGraderPanel } from './components/EssayGraderPanel';
-import { LightbulbIcon, BrainCircuitIcon, EditIcon } from './components/Icons';
+import { MCQPanel } from './components/MCQPanel';
+import { LightbulbIcon, BrainCircuitIcon, EditIcon, ListCheckIcon } from './components/Icons';
 import { generateClozeFlashcards } from './services/geminiService';
 import { calculateSrsParameters, createNewReviewableCard, getNextDueDate } from './services/srsService';
 import type { FlashcardData, Specialty, ReviewableFlashcard, ModelConfig, ModelStageConfig, ClozeType } from './types';
@@ -18,7 +21,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // App state
-  const [activeTab, setActiveTab] = useState<'generator' | 'review' | 'essayGrader'>('generator');
+  const [activeTab, setActiveTab] = useState<'generator' | 'review' | 'essayGrader' | 'mcq'>('generator');
   const [deck, setDeck] = useState<ReviewableFlashcard[]>([]);
   const [reviewSessionCards, setReviewSessionCards] = useState<ReviewableFlashcard[] | null>(null);
   
@@ -41,6 +44,15 @@ const App: React.FC = () => {
       const savedModelConfig = localStorage.getItem('srs-model-config');
       if (savedModelConfig) {
           const parsedConfig = JSON.parse(savedModelConfig);
+
+          // Migration: Fix old 'gemini-3-flash' model ID to 'gemini-3-flash-preview'
+          // to prevent 404 errors if user has old config saved.
+          Object.keys(parsedConfig).forEach(key => {
+             if (parsedConfig[key]?.model === 'gemini-3-flash') {
+                parsedConfig[key].model = 'gemini-3-flash-preview';
+             }
+          });
+
           // Ensure all keys are present and structure is valid to avoid errors with older configs
           setModelConfig(prev => ({...prev, ...parsedConfig}));
       }
@@ -202,6 +214,8 @@ const App: React.FC = () => {
         return <ReviewPanel deck={deck} onStartReview={handleStartReview} />;
       case 'essayGrader':
         return <EssayGraderPanel modelConfig={modelConfig} onModelConfigChange={handleModelConfigChange} />;
+      case 'mcq':
+        return <MCQPanel />;
       default:
         return null;
     }
@@ -211,7 +225,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300">
       <Header />
       <main className="container mx-auto p-4 md:p-6 lg:p-8">
-        <div className="mb-8 border-b border-slate-200 dark:border-slate-700">
+        <div className="mb-8 border-b border-slate-200 dark:border-slate-700 overflow-x-auto">
             <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                 <button
                     onClick={() => setActiveTab('generator')}
@@ -250,6 +264,17 @@ const App: React.FC = () => {
                 >
                     <EditIcon className={`h-5 w-5 transition-colors ${activeTab === 'essayGrader' ? 'text-blue-500' : 'text-slate-400 group-hover:text-slate-500 dark:group-hover:text-slate-400'}`} />
                     Luyện thi Tự luận
+                </button>
+                <button
+                    onClick={() => setActiveTab('mcq')}
+                    className={`group inline-flex items-center gap-2 whitespace-nowrap py-4 px-1 border-b-2 font-semibold text-sm transition-colors duration-200 ease-in-out ${
+                        activeTab === 'mcq'
+                        ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
+                        : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
+                    }`}
+                >
+                    <ListCheckIcon className={`h-5 w-5 transition-colors ${activeTab === 'mcq' ? 'text-indigo-500' : 'text-slate-400 group-hover:text-slate-500 dark:group-hover:text-slate-400'}`} />
+                    Trắc nghiệm (MCQ)
                 </button>
             </nav>
         </div>

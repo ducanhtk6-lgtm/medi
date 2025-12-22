@@ -1,5 +1,5 @@
 {
-  "name": "medical-anki-cloze-generator-[gemini-3-pro]",
+  "name": "medical-anki-cloze/-mcq-generator",
   "private": true,
   "version": "0.0.0",
   "type": "module",

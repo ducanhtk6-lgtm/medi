@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import type { ModelName, ModelStageConfig } from '../types';
 
@@ -33,6 +34,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({
                 >
                     <option value="gemini-3-pro-preview">3.0 Pro (Chất lượng cao nhất)</option>
                     <option value="gemini-2.5-pro">2.5 Pro (Cân bằng)</option>
+                    <option value="gemini-3-flash-preview">3.0 Flash (Tốc độ & Hiệu quả)</option>
                     <option value="gemini-2.5-flash">2.5 Flash (Nhanh nhất)</option>
                 </select>
                 <div className="flex items-center">

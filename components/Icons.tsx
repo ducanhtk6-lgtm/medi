@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 
 export const BrainCircuitIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -266,4 +268,13 @@ export const AlertTriangleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props
     <line x1="12" x2="12" y1="9" y2="13" />
     <line x1="12" x2="12.01" y1="17" y2="17" />
   </svg>
+);
+
+export const ListCheckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+        <path d="M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1Z" />
+        <path d="m9 11 3 3L22 4" opacity="0" /> 
+        <path d="m9 12 2 2 4-4" />
+    </svg>
 );
